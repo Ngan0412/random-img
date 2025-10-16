@@ -7,101 +7,111 @@
     <style>
       body {
   font-family: "Segoe UI", Roboto, sans-serif;
-  background: linear-gradient(135deg, #e3f2fd, #f8f9fa);
- 
-}
-
-h1 {
-  margin-bottom: 16px;
-  color: #0d6efd;
+  background: #000;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* ẩn thanh cuộn */
 }
 
 .controls {
   position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-}
-
-.function {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 20px;
-  justify-content: center;
-  align-items: center;
-  background: #ffffff;
-  padding: 16px 20px;
-  border-radius: 14px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-label {
-  font-weight: 500;
-  color: #333;
-}
-
-select,
-input,
-button {
-  padding: 8px 12px;
-  font-size: 15px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  transition: 0.2s;
-}
-
-select:focus,
-input:focus {
-  border-color: #0d6efd;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
-}
-
-button {
-  background-color: #0d6efd;
-  color: #fff;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-}
-
-#pauseBtn {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background-color: #198754;
-  font-size: 18px;
-  padding: 10px 20px;
-  border-radius: 50px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
 img {
   width: 100%;
   height: 100%;
-  border-radius: 14px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-  transition: transform 0.3s ease;
+  object-fit: cover; /* hoặc cover nếu muốn ảnh đầy màn hình */
+  border: none;
+  border-radius: 0;
+  background: #000;
+  transition: opacity 0.5s ease;
 }
 
+/* Panel chức năng nhỏ gọn */
+.function {
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px 12px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  z-index: 10;
+  width: 90%;
+  max-width: 360px;
+}
 
-/* Nút toggle nổi góc phải */
-.toggle-btn {
-  position: absolute;
-  top: -12px;
-  right: -12px;
+label {
+  display: none; /* ẩn label để tiết kiệm không gian */
+}
+
+select,
+input,
+button {
+  font-size: 14px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+button {
   background-color: #0d6efd;
-  color: white;
+  color: #fff;
   border: none;
-  width: 120px;
-  height: 36px;
-  font-size: 18px;
+  font-weight: 500;
   cursor: pointer;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+/* Nút toggle nhỏ góc trên phải */
+.toggle-btn {
+  position: fixed;
+  bottom: 15px;
+  right: 90px;
+  background-color: #198754;
+  color: white;
+  font-size: 22px;
+  padding: 10px;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  z-index: 11;
+}
+
+/* Nút pause nhỏ gọn nổi góc phải dưới */
+#pauseBtn {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  background-color: #198754;
+  color: white;
+  font-size: 22px;
+  padding: 10px;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  z-index: 11;
+}
+
+#pauseBtn.paused {
+  background-color: #dc3545;
 }
 
 .hidden {
@@ -111,7 +121,6 @@ img {
   </head>
   <body>
     <div class="controls">
-      <button class="toggle-btn" id="toggleBtn">Chọn ngày</button>
 
       <div class="function" id="functionPanel">
         <label>Từ ngày:</label>
@@ -126,7 +135,8 @@ img {
         <button onclick="applySettings()">Áp dụng</button>
       </div>
       <img id="randomImage" src alt="Random image" />
-      <button id="pauseBtn">⏸️ Tạm dừng</button>
+      <button class="toggle-btn" id="toggleBtn">⚙️</button>
+      <button id="pauseBtn">⏸️</button>
     </div>
 
     <script>
@@ -303,7 +313,7 @@ function applySettings() {
   showRandomImage();
   intervalId = setInterval(showRandomImage, intervalSeconds * 1000);
   isPaused = false;
-  pauseBtn.textContent = "⏸️ Tạm dừng";
+  pauseBtn.textContent = "⏸️";
 }
 
 // Toggle panel
@@ -314,7 +324,7 @@ toggleBtn.addEventListener("click", () => {
 // Pause / Resume
 pauseBtn.addEventListener("click", () => {
   isPaused = !isPaused;
-  pauseBtn.textContent = isPaused ? "▶️ Tiếp tục" : "⏸️ Tạm dừng";
+  pauseBtn.textContent = isPaused ? "▶️" : "⏸️";
   if (!isPaused) showRandomImage(); // Hiển thị ngay khi resume
 });
 
