@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Random Image Viewer</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        background-color: #f4f4f4;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+      }
+      img {
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+      }
+    </style>
+  </head>
+  <body>
+
+    <img id="randomImage" src alt="Random image" />
+    <script>
+      const images = [
+        "z7121904591137_db0b041d8365938b45c4b78c0ca42296.jpg",
+        "z7121904599817_e025937c395f48f88495255bac8b7c9e.jpg",
+        "z7121904600304_803669b767c2fde02c1a63bf4fe1ab73.jpg",
+        "z7121904616061_d360e3f1af03998a0013d1981e693148.jpg",
+        "z7121904623623_b83a75aeda9d05da72b241bf4a849822.jpg",
+        "z7121904635894_dacfd0bbdc7695f1e5780b959370b8e6.jpg",
+        "z7121904672112_2d91937acbd6c655499d162d3759d84d.jpg",
+        "z7121904695070_e88964a731688e8a6ec43d5c972af939.jpg",
+        "z7121904719574_bb4966c320c4cf7b26eeb9ff64d9f892.jpg",
+        "z7121904741100_940a168d48fad19658ef9d0466dcaac0.jpg",
+        "z7121904741812_92f3a28fe035c30e80adb49a3238b41c.jpg",
+        "z7121904756797_aa295f0a8ec6165c1d570e0dc4c2c95e.jpg",
+        "z7121904757189_d11c89984dcf64f353b1be512d35c222.jpg",
+        "z7121904765376_e1da9aae3d686cb5fb8509a115af48a9.jpg",
+        "z7121904798588_7d1a5ecb8d5cbc16da865237b6481b6c.jpg",
+        "z7121904800486_258cf2add040b800d570f2e8ed14cb56.jpg",
+        "z7121904807985_dcb05cfe7d99f5944318113e4420c0b5.jpg",
+        "z7121904817526_cfcca907c03ba70512a27439d335caaf.jpg",
+        "z7121904822744_45b842cc71ad30a665c00d568eb0d0e1.jpg",
+        "z7121904836401_72f7ad619c9353b9db59413777bfc1d8.jpg",
+        "z7121904843509_eb3073aab05dc89b060182a2d8a6eca1.jpg",
+        "z7121904846036_53305d461fb6a4b04732e57623f7a398.jpg",
+        "z7121904853974_c4e2607f09ac1156fc86267e75c683ea.jpg",
+        "z7121904879669_5eff74b6c426d46782b7855c089462b2.jpg",
+        "z7121904880024_437a91c1da976d21705c7c53643a4989.jpg",
+        "z7121904892503_6f6da208ca86aa9ec688d8aef26dd5d4.jpg",
+        "z7121904909773_cbf9279d978cdf01c9087e1cb2a35d99.jpg",
+        "z7121904926610_04c2c256f955dfe12499388976a2f02e.jpg",
+        "z7121904928275_ef07a732378b835d5eb4851047422ce2.jpg",
+        "z7121904938788_1f1b103573fcc5e3b71878fe863cf9e4.jpg",
+        "z7121904950381_8eab7bae8d450c20507ad9bb9db90fd7.jpg",
+        "z7121904954763_1eb1ac3db5d7584c849241abe5074df2.jpg",
+        "z7121904960431_2226a08aa332289f81f0f446571d635f.jpg",
+        "z7121904971462_3a47c1959249835ab801532ebe80a1f5.jpg",
+        "z7121904972301_14cb097b120722606e415d00dfb9943a.jpg",
+        "z7121904987391_c35384bae5c612ea7dda5665c80547b1.jpg",
+        "z7121904987568_fe943fc5438291d2d71702d0d23ef6c9.jpg",
+        "z7121905002686_6a543a3e8316238b833b78335e9335ae.jpg",
+        "z7121905008207_12614d81c07b19f7824edb68e875a323.jpg",
+        "z7121905009854_b3a28735fc8526a3c761393086d0445a.jpg",
+        "z7121905025229_299c02e687ea5e462de5d46bac6cc91d.jpg",
+        "z7121905038962_ac621c1644cb13d5d71a2115331b5883.jpg",
+        "z7121905050189_4253d4d4ea47933267695f936e535f05.jpg",
+        "z7121905052946_96a844b265e787fe840663653fe1b128.jpg",
+        "z7121905064227_375a7b1ea5b1c866f68821231ca82249.jpg",
+        "z7121905071313_61f9bd57d94b4584a434da97c6c8915f.jpg",
+        "z7121905071661_5575f67d0a29e6b4c1d67cf0f01c23f5.jpg",
+        "z7121905087272_25bc53b60af13e1b5b7c33899de74ac4.jpg",
+        "z7121905088104_60582bfd7e4052c40c5bdcf8bd874e57.jpg",
+        "z7121905099659_ca5131f3dfca3c3735aa16beebae8e76.jpg",
+        "z7121905468031_3f63465ed76142d8155100d22ae2d4c4.jpg",
+        "z7121905487011_ddf70546a369d2ca6ca337ea72b256c7.jpg",
+        "z7121905496047_8ab71fcaed5c07b32597b54ac2bfa0de.jpg",
+        "z7121905506664_cdd6d050e17f6955c9480f3157caca9b.jpg",
+        "z7121905542621_c86da1c8c34f1c26d7ce0ea650244158.jpg",
+        "z7121905551349_fc30c442cdde886d89b5ce66708b2e39.jpg",
+        "z7121905560702_c42fc5591aed5a2648dec6f57408430f.jpg",
+        "z7121905561019_8f2c9e21386ef90c55f491ee56775dee.jpg",
+        "z7121905573988_85ed07a4f2432afdf9f9ee3bfde27c43.jpg",
+        "z7121905580176_bc75b9b5b511268d1cd70443d12e2ab1.jpg",
+        "z7121905585682_4967ed6f135117abf31b6fc3a4b9da65.jpg",
+        "z7121905600181_bf06b6d3f456d709af91f1164e362e38.jpg",
+        "z7121905603919_9a3faf2c0103f3c0c281adfb86ace8e4.jpg",
+        "z7121905614078_eaf85930323eb4d082a000781b1443a1.jpg",
+        "z7121905624999_dda1ac5eb08463d4349c077c15c7fa58.jpg",
+        "z7121905629187_de859a691b7bb0dfd6f531121a8dd1c2.jpg",
+        "z7121905635567_5c3cc004363c1a9fe0dcd85fd7e47a52.jpg",
+        "z7121905646756_89a4c6d4af61e7ebf4ea4ef23dbd1340.jpg",
+        "z7121905653384_87d5ddb3f939e632e9d83c0db6733471.jpg",
+        "z7121905657125_a8462f1fd7fc54021255a8a068579937.jpg",
+        "z7121905668735_496865a5a82a797f7e2da7788d6b1d33.jpg"
+      ];
+
+      function showRandomImage() {
+        const img = document.getElementById("randomImage");
+        const randomIndex = Math.floor(Math.random() * images.length);
+        img.src = images[randomIndex];
+      }
+
+      // Hiển thị ảnh ngẫu nhiên khi mở trang
+      window.onload = () => {
+        showRandomImage();
+        // Tự động đổi ảnh sau mỗi 10 giây (10000 ms)
+        setInterval(showRandomImage, 30000);
+      };
+    </script>
+  </body>
+</html>
