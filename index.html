@@ -6,114 +6,328 @@
     <title>Random Image Viewer</title>
     <style>
       body {
-        font-family: sans-serif;
-        background-color: #f4f4f4;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        margin: 0;
-      }
-      img {
-        width: 100%;
-        height: 100%;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        transition: transform 0.3s ease;
-      }
+  font-family: "Segoe UI", Roboto, sans-serif;
+  background: linear-gradient(135deg, #e3f2fd, #f8f9fa);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  margin: 0;
+  padding: 30px 20px;
+}
+
+h1 {
+  margin-bottom: 16px;
+  color: #0d6efd;
+}
+
+.controls {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.function {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+  padding: 16px 20px;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+label {
+  font-weight: 500;
+  color: #333;
+}
+
+select,
+input,
+button {
+  padding: 8px 12px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: 0.2s;
+}
+
+select:focus,
+input:focus {
+  border-color: #0d6efd;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
+}
+
+button {
+  background-color: #0d6efd;
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+}
+
+#pauseBtn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #198754;
+  font-size: 18px;
+  padding: 10px 20px;
+  border-radius: 50px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+img {
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s ease;
+}
+
+
+/* Nút toggle nổi góc phải */
+.toggle-btn {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  width: 120px;
+  height: 36px;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.hidden {
+  display: none;
+}
     </style>
   </head>
   <body>
+    <div class="controls">
+      <button class="toggle-btn" id="toggleBtn">Chọn ngày</button>
 
-    <img id="randomImage" src alt="Random image" />
+      <div class="function" id="functionPanel">
+        <label>Từ ngày:</label>
+        <select id="fromDay"></select>
+
+        <label>Đến ngày:</label>
+        <select id="toDay"></select>
+
+        <label>Khoảng thời gian (giây):</label>
+        <input type="number" id="intervalInput" value="30" min="1" />
+
+        <button onclick="applySettings()">Áp dụng</button>
+      </div>
+      <img id="randomImage" src alt="Random image" />
+      <button id="pauseBtn">⏸️ Tạm dừng</button>
+    </div>
+
     <script>
-      const images = [
-        "z7121904591137_db0b041d8365938b45c4b78c0ca42296.jpg",
-        "z7121904599817_e025937c395f48f88495255bac8b7c9e.jpg",
-        "z7121904600304_803669b767c2fde02c1a63bf4fe1ab73.jpg",
-        "z7121904616061_d360e3f1af03998a0013d1981e693148.jpg",
-        "z7121904623623_b83a75aeda9d05da72b241bf4a849822.jpg",
-        "z7121904635894_dacfd0bbdc7695f1e5780b959370b8e6.jpg",
-        "z7121904672112_2d91937acbd6c655499d162d3759d84d.jpg",
-        "z7121904695070_e88964a731688e8a6ec43d5c972af939.jpg",
-        "z7121904719574_bb4966c320c4cf7b26eeb9ff64d9f892.jpg",
-        "z7121904741100_940a168d48fad19658ef9d0466dcaac0.jpg",
-        "z7121904741812_92f3a28fe035c30e80adb49a3238b41c.jpg",
-        "z7121904756797_aa295f0a8ec6165c1d570e0dc4c2c95e.jpg",
-        "z7121904757189_d11c89984dcf64f353b1be512d35c222.jpg",
-        "z7121904765376_e1da9aae3d686cb5fb8509a115af48a9.jpg",
-        "z7121904798588_7d1a5ecb8d5cbc16da865237b6481b6c.jpg",
-        "z7121904800486_258cf2add040b800d570f2e8ed14cb56.jpg",
-        "z7121904807985_dcb05cfe7d99f5944318113e4420c0b5.jpg",
-        "z7121904817526_cfcca907c03ba70512a27439d335caaf.jpg",
-        "z7121904822744_45b842cc71ad30a665c00d568eb0d0e1.jpg",
-        "z7121904836401_72f7ad619c9353b9db59413777bfc1d8.jpg",
-        "z7121904843509_eb3073aab05dc89b060182a2d8a6eca1.jpg",
-        "z7121904846036_53305d461fb6a4b04732e57623f7a398.jpg",
-        "z7121904853974_c4e2607f09ac1156fc86267e75c683ea.jpg",
-        "z7121904879669_5eff74b6c426d46782b7855c089462b2.jpg",
-        "z7121904880024_437a91c1da976d21705c7c53643a4989.jpg",
-        "z7121904892503_6f6da208ca86aa9ec688d8aef26dd5d4.jpg",
-        "z7121904909773_cbf9279d978cdf01c9087e1cb2a35d99.jpg",
-        "z7121904926610_04c2c256f955dfe12499388976a2f02e.jpg",
-        "z7121904928275_ef07a732378b835d5eb4851047422ce2.jpg",
-        "z7121904938788_1f1b103573fcc5e3b71878fe863cf9e4.jpg",
-        "z7121904950381_8eab7bae8d450c20507ad9bb9db90fd7.jpg",
-        "z7121904954763_1eb1ac3db5d7584c849241abe5074df2.jpg",
-        "z7121904960431_2226a08aa332289f81f0f446571d635f.jpg",
-        "z7121904971462_3a47c1959249835ab801532ebe80a1f5.jpg",
-        "z7121904972301_14cb097b120722606e415d00dfb9943a.jpg",
-        "z7121904987391_c35384bae5c612ea7dda5665c80547b1.jpg",
-        "z7121904987568_fe943fc5438291d2d71702d0d23ef6c9.jpg",
-        "z7121905002686_6a543a3e8316238b833b78335e9335ae.jpg",
-        "z7121905008207_12614d81c07b19f7824edb68e875a323.jpg",
-        "z7121905009854_b3a28735fc8526a3c761393086d0445a.jpg",
-        "z7121905025229_299c02e687ea5e462de5d46bac6cc91d.jpg",
-        "z7121905038962_ac621c1644cb13d5d71a2115331b5883.jpg",
-        "z7121905050189_4253d4d4ea47933267695f936e535f05.jpg",
-        "z7121905052946_96a844b265e787fe840663653fe1b128.jpg",
-        "z7121905064227_375a7b1ea5b1c866f68821231ca82249.jpg",
-        "z7121905071313_61f9bd57d94b4584a434da97c6c8915f.jpg",
-        "z7121905071661_5575f67d0a29e6b4c1d67cf0f01c23f5.jpg",
-        "z7121905087272_25bc53b60af13e1b5b7c33899de74ac4.jpg",
-        "z7121905088104_60582bfd7e4052c40c5bdcf8bd874e57.jpg",
-        "z7121905099659_ca5131f3dfca3c3735aa16beebae8e76.jpg",
-        "z7121905468031_3f63465ed76142d8155100d22ae2d4c4.jpg",
-        "z7121905487011_ddf70546a369d2ca6ca337ea72b256c7.jpg",
-        "z7121905496047_8ab71fcaed5c07b32597b54ac2bfa0de.jpg",
-        "z7121905506664_cdd6d050e17f6955c9480f3157caca9b.jpg",
-        "z7121905542621_c86da1c8c34f1c26d7ce0ea650244158.jpg",
-        "z7121905551349_fc30c442cdde886d89b5ce66708b2e39.jpg",
-        "z7121905560702_c42fc5591aed5a2648dec6f57408430f.jpg",
-        "z7121905561019_8f2c9e21386ef90c55f491ee56775dee.jpg",
-        "z7121905573988_85ed07a4f2432afdf9f9ee3bfde27c43.jpg",
-        "z7121905580176_bc75b9b5b511268d1cd70443d12e2ab1.jpg",
-        "z7121905585682_4967ed6f135117abf31b6fc3a4b9da65.jpg",
-        "z7121905600181_bf06b6d3f456d709af91f1164e362e38.jpg",
-        "z7121905603919_9a3faf2c0103f3c0c281adfb86ace8e4.jpg",
-        "z7121905614078_eaf85930323eb4d082a000781b1443a1.jpg",
-        "z7121905624999_dda1ac5eb08463d4349c077c15c7fa58.jpg",
-        "z7121905629187_de859a691b7bb0dfd6f531121a8dd1c2.jpg",
-        "z7121905635567_5c3cc004363c1a9fe0dcd85fd7e47a52.jpg",
-        "z7121905646756_89a4c6d4af61e7ebf4ea4ef23dbd1340.jpg",
-        "z7121905653384_87d5ddb3f939e632e9d83c0db6733471.jpg",
-        "z7121905657125_a8462f1fd7fc54021255a8a068579937.jpg",
-        "z7121905668735_496865a5a82a797f7e2da7788d6b1d33.jpg"
-      ];
+      // Ảnh được phân theo ngày
+const imagesByDate = {
+  "Day 1": [
+    "1/d1_1.jpg",
+    "1/d1_2.jpg",
+    "1/d1_3.jpg",
+  ],
+  "Day 2": [
+    "2/d2_1.jpg",
+    "2/d2_2.jpg",
+    "2/d2_3.jpg"
+  ],
+  "Day 3": [
+    "3/d3_1.jpg",
+    "3/d3_2.jpg",
+    "3/d3_3.jpg"
+  ],
+  "Day 4": [
+    "4/z7122981200897_e9179e083ec8ede20325e908095f81c0.jpg",
+    "4/z7122981209823_83951333f1860c23d2214b65c1f8e4f5.jpg",
+    "4/z7122981214682_7fec1b5b231756bf9334b188445693eb.jpg"
+  ],
+  "Day 5": [
+    "5/z7122982426968_4cb36150828d0e8b4ce96f3ac0d0315a.jpg",
+    "5/z7122982428437_89c643619b669166387af49f0f140c92.jpg",
+    "5/z7122982438709_74cc95e3ac9061b0f0a3c194c233d154.jpg",
+    "5/z7122982445197_45c52a16a54e5a4c9f2430911c1e6f6b.jpg"
+  ],
+  "Day 6": [
+    "6/z7122984565287_e92cf7b194efc6baa21233f90d79dbbb.jpg",
+    "6/z7122984577850_c3b0c75e6beed7efcd65df1b6989cc8b.jpg",
+    "6/z7122984578065_5e50d42ef9369b98736348f104f818dd.jpg",
+    "6/z7122984988213_4e75b4e5bf87d70913b127fba5137d0f.jpg"
+  ],
+  "Day 7": [
+    "7/z7122986362761_1728513736b8f624331f5135291a3cb7.jpg",
+    "7/z7122986367051_68e0c6eba9e3afdce6c142bd39aee118.jpg",
+    "7/z7122986372373_08453a3e761ef611e8669c5d28a36ec5.jpg"
+  ],
+  "Day 8": [
+    "8/z7122987581609_005e6d4ebd7387c644ffe337fbdefa71.jpg",
+    "8/z7122987584221_5892f48b7c2cc1a50c4b869354b876d8.jpg",
+    "8/z7122987591722_84a48c9443660bb064ca98b5a314ffea.jpg",
+    "8/z7122987593097_0c9b3b243bd6548af21c4b1338166775.jpg"
+  ],
+  "Day 9": [
+    "9/z7122988549266_8269c1cb3e2a37a8f1b554e71806efa9.jpg",
+    "9/z7122988560156_0387b59ac77316e7a4db9ba517845972.jpg",
+    "9/z7122988565154_6fe597cf79e1ce075d3c955f9d41c374.jpg",
+    "9/z7122988572043_3ff05066f096c83b1547f25f0fdc7825.jpg"
+  ],
+  "Day 10": [
+    "10/z7122992695515_4112151d514186cd4c882d58162c4297.jpg",
+    "10/z7122992699264_eed3ae4068c13a32e73ec146c8ae1da9.jpg",
+    "10/z7122992709960_0f84c839aba7fbcd5369514cdd348e8d.jpg", 
+    "10/z7122992718036_00efea1c48c4d63fbc4e63a74f24c8e4.jpg",
+    "10/z7122992726377_a9e8bb4a47642e6241fe7fc463a7f323.jpg"
+  ],
+  "Day 11": [
+    "11/z7122994433387_83d69e28dc8b0ff5b5949964d8f9e12a.jpg",
+    "11/z7122994448952_abbc0df3afa2754e656da86390cc5f2e.jpg",
+    "11/z7122994449675_08e1989cfa0ff0b5a3194c9b798d76f9.jpg",
+    "11/z7122994459421_a8da306a647b45885b36230f7aa3a4af.jpg",
+    "11/z7122994463710_64db472a0433d4877598257bd6ad5237.jpg"
+  ],
+  "Day 12": [
+    "12/z7123000119486_597400cc4be192dc903793bb26dfeefb.jpg",
+    "12/z7123000123294_601dc8f61e41fbdd6c182e65a3a446b1.jpg",
+    "12/z7123000136602_1cce77e19d75cafbc35d241cbbe96281.jpg",
+    "12/z7123000139220_cf45508552ed702ffc59f5cf6fa958f1.jpg",
+    "12/z7123000152657_89efc0c7de831a4d4405da52d98b3037.jpg",
+    "12/z7123000158280_d453cedde4a119470d9b8998321c66e3.jpg",
+    "12/z7123000161559_138c86b6151ca08ddc000737f09cb266.jpg",
+    "12/z7123000166304_95cf3e947d4d8f3cdb5ab0d4708bcbd7.jpg"
+  ],
+  "Day 13": [
+    "13/z7123000880302_8f3e73819d39fc5fc47048e7805a5546.jpg",
+    "13/z7123000883173_86a95173dee08e50eadd89ae44090c77.jpg",
+    "13/z7123000887316_20c0e21f830268bc2595482ae2c53458.jpg",
+    "13/z7123000892954_cdf085f237a268fcf59e8a984ce0dde4.jpg",
+    "13/z7123000909695_83e76b079e68df987984278e9f823e43.jpg",
+    "13/z7123000916211_4f10d12e17ee77e1b198763616f96896.jpg",
+    "13/z7123000924614_d56f66336320fcc5c1d3cbc91188cbd3.jpg",
+  ],
+  "Day 14": [
+    "14/z7123002705661_d372a6917a1f7323d95aa3a319fb24ce.jpg",
+    "14/z7123002721949_d6440e05818888caaa8c9bfddbb6407a.jpg",
+    "14/z7123002726724_096ded3359fb5b0e2504a8d4b2f5f26a.jpg",
+    "14/z7123002727797_2700c6ee66a9093feb661033c83370a2.jpg",
+    "14/z7123002741788_de72acf08d06c3ed2445c8dd6a2aaff1.jpg",
+    "14/z7123002750523_358e3d76022e29c247fbeb7a5b4b656d.jpg",
+    "14/z7123002753936_6f1ebef439f6c3207ce8e8f639282797.jpg",
+    "14/z7123002760137_c870b0b9cd788acec9b9867237bd6dc7.jpg"
+  ],
+  "Day 15": [
+    "15/z7123004478188_49323dcd5c3a96ad04c1a962e85abc80.jpg",
+    "15/z7123004484628_f56ab602790009340a5a9bd209e4aad7.jpg",
+    "15/z7123004495186_536df521002468435f375bafade789f6.jpg",
+    "15/z7123004501700_493798a6347dde7410330442ec56a6ed.jpg",
+    "15/z7123004502648_9caf1a8bcaaff31a8dfb6fdcfa184213.jpg",
+    "15/z7123004512129_8388ff84bbb87c6b590b994f2906df03.jpg",
+    "15/z7123004527249_c50bcdda3dc69336b75a779cfa6111e0.jpg"
+  ],
+    "Day 16": [
+    "16/z7123008355660_fb7aa814bf4ff534266569d00fd61200.jpg",
+    "16/z7123008360040_904d2c79b0688dedabfa6930d678a967.jpg",
+    "16/z7123008365886_71d3af992f2b175b4f4958fb9a69c43f.jpg",
+    "16/z7123008380201_ccd4b8911e1be002dc3d6e93149db1f8.jpg",
+    "16/z7123008383238_79f30be67040516da815f322a8f411ba.jpg"
+    ]
+};
+// Gộp tất cả ảnh
+const allImages = Object.values(imagesByDate).flat();
+imagesByDate["Tất cả"] = allImages;
 
-      function showRandomImage() {
-        const img = document.getElementById("randomImage");
-        const randomIndex = Math.floor(Math.random() * images.length);
-        img.src = images[randomIndex];
-      }
+// Các phần tử HTML
+const imgElement = document.getElementById("randomImage");
+const fromDaySelect = document.getElementById("fromDay");
+const toDaySelect = document.getElementById("toDay");
+const intervalInput = document.getElementById("intervalInput");
+const toggleBtn = document.getElementById("toggleBtn");
+const functionPanel = document.getElementById("functionPanel");
+const pauseBtn = document.getElementById("pauseBtn");
+let currentImages = allImages;
+let intervalId = null;
+let isPaused = false;
 
-      // Hiển thị ảnh ngẫu nhiên khi mở trang
-      window.onload = () => {
-        showRandomImage();
-        // Tự động đổi ảnh sau mỗi 10 giây (10000 ms)
-        setInterval(showRandomImage, 30000);
-      };
+// Tạo danh sách ngày
+function initDayOptions() {
+  const days = Object.keys(imagesByDate).filter(d => d !== "Tất cả");
+  for (const day of days) {
+    const opt1 = document.createElement("option");
+    const opt2 = document.createElement("option");
+    opt1.value = opt2.value = day;
+    opt1.textContent = opt2.textContent = day;
+    fromDaySelect.appendChild(opt1);
+    toDaySelect.appendChild(opt2);
+  }
+
+  fromDaySelect.value = days[0];
+  toDaySelect.value = days[days.length - 1];
+}
+
+function showRandomImage() {
+  if (isPaused || currentImages.length === 0) return;
+  const randomIndex = Math.floor(Math.random() * currentImages.length);
+  imgElement.src = currentImages[randomIndex];
+}
+
+// Lấy ảnh trong khoảng từ – đến
+function getImagesInRange(fromDay, toDay) {
+  const days = Object.keys(imagesByDate).filter(d => d !== "Tất cả");
+  const startIndex = days.indexOf(fromDay);
+  const endIndex = days.indexOf(toDay);
+
+  if (startIndex === -1 || endIndex === -1) return [];
+  const [from, to] = startIndex <= endIndex ? [startIndex, endIndex] : [endIndex, startIndex];
+
+  const selectedDays = days.slice(from, to + 1);
+  return selectedDays.flatMap(d => imagesByDate[d] || []);
+}
+
+function applySettings() {
+  const fromDay = fromDaySelect.value;
+  const toDay = toDaySelect.value;
+  const intervalSeconds = parseInt(intervalInput.value) || 30;
+
+  currentImages = getImagesInRange(fromDay, toDay);
+
+  if (intervalId) clearInterval(intervalId);
+  showRandomImage();
+  intervalId = setInterval(showRandomImage, intervalSeconds * 1000);
+  isPaused = false;
+  pauseBtn.textContent = "⏸️ Tạm dừng";
+}
+
+// Toggle panel
+toggleBtn.addEventListener("click", () => {
+  functionPanel.classList.toggle("hidden");;
+});
+
+// Pause / Resume
+pauseBtn.addEventListener("click", () => {
+  isPaused = !isPaused;
+  pauseBtn.textContent = isPaused ? "▶️ Tiếp tục" : "⏸️ Tạm dừng";
+  if (!isPaused) showRandomImage(); // Hiển thị ngay khi resume
+});
+
+// Khởi tạo danh sách
+initDayOptions();
+showRandomImage();
+intervalId = setInterval(showRandomImage, (parseInt(intervalInput.value) || 30) * 1000);
     </script>
   </body>
 </html>
